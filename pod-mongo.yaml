@@ -1,0 +1,41 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 27017
+      # Port to forward to inside the pod
+      targetPort: 27017
+      
+
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      volumes:
+        - name: mongo-pv-storage-v1
+          persistentVolumeClaim: 
+            claimName: mongo-pv-claim-v1
+      containers:
+        - name: mongo
+          image: mongo
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: mongo-pv-storage-v1

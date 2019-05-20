@@ -1,0 +1,36 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-emp
+spec:
+  selector:
+    app: my-emp
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 80
+      # Port to forward to inside the pod
+      targetPort: 8888
+      # Port accessible outside cluster
+≈
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-emp
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-emp
+    spec:
+      containers:
+        - name: my-emp
+          image: kavisuresh/employee
+          ports:
+            - containerPort: 8888
+
